@@ -603,7 +603,6 @@ const HTML  = "https://cdn.jsdelivr.net/gh/bestsabplayerox/html@master/";
   { title: "Papa's Wingeria", url: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor@master/games/286.html", image: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/images/308.png" },
   { title: "Papa's Pizzeria", url: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor@master/games/287.html", image: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/images/309.jpg" },
   { title: "Achilles 2", url: "https://script.google.com/macros/s/AKfycbw2YH3dPJE1XWPOXBnR4UOidr3vX8fgY0ZIyWj1Bmx9Lcty0e1bfUOYwPJ02lviN2Hb/exec?game=112.html", image: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/images/236.jpg" },
-  { title: "Russian Counter Strike", url: "https://script.google.com/macros/s/AKfycbw2YH3dPJE1XWPOXBnR4UOidr3vX8fgY0ZIyWj1Bmx9Lcty0e1bfUOYwPJ02lviN2Hb/exec?game=111.html", image: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/images/235.jpg" },
   { title: "Deltarune", url: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor@master/games/110.html", image: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/images/234.jpg" },
   { title: "Learn to Fly 3", url: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor@master/games/109.html", image: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/images/233.jpg" },
   { title: "Lego Batman 2", url: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor@master/games/108.html", image: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/images/232.jpg" },
@@ -615,7 +614,6 @@ const HTML  = "https://cdn.jsdelivr.net/gh/bestsabplayerox/html@master/";
   { title: "Scribblenauts", url: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor@master/games/102.html", image: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/images/226.jpg" },
   { title: "Sprunki", url: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor@master/games/101.html", image: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/images/225.jpg" },
   { title: "Strange Rope Police", url: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor@master/games/100.html", image: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/images/224.jpg" },
-  { title: "Street Fighter III", url: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor@master/games/99.html", image: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/images/223.jpg" },
   { title: "Super Liquid Soccer", url: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor@master/games/98.html", image: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/images/222.jpg" },
   { title: "Tempoverdose", url: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor@master/games/97.html", image: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/images/221.jpg" },
   { title: "Abandoned", url: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor@master/games/96.html", image: "https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/images/220.jpg" },
@@ -1573,35 +1571,38 @@ const HTML  = "https://cdn.jsdelivr.net/gh/bestsabplayerox/html@master/";
         }
 
         // REDESIGNED BOOTING SYSTEM -> NO BLOBS, ONLY ABOUT:BLANK DOCUMENT WRITES
-        async function runExe(g) {
-            popMsg("Booting Title...");
-            try {
-                let txt = "";
-                if (g.htmlContent) { 
-                    txt = g.htmlContent; 
-                } 
-                else if (g.url) {
-                    const res = await fetch(g.url);
-                    if(!res.ok) throw new Error("fetch fail");
-                    txt = await res.text();
-                } else return;
+        function startSession() {
+    document.getElementById('session-overlay').style.display = 'flex';
+    startT = Date.now();
+    tickTime();
+    clearInterval(tInterval);
+    tInterval = setInterval(tickTime, 1000);
+}
 
-                activeWin = window.open('about:blank', '_blank');
-                if(!activeWin) { popMsg("Browser blocked popup.", "error"); return; }
+async function runExe(g) {
+    popMsg("Booting Title...");
+    activeWin = window.open('about:blank', '_blank');
+    if (!activeWin) { popMsg("Browser blocked popup.", "error"); return; }
 
-                activeWin.document.open();
-                activeWin.document.write(txt);
-                activeWin.document.close();
+    try {
+        let txt = "";
+        if (g.htmlContent) txt = g.htmlContent;
+        else if (g.url) {
+            const res = await fetch(g.url);
+            if (!res.ok) throw new Error("fetch fail");
+            txt = await res.text();
+        } else { activeWin.close(); return; }
 
-                document.getElementById('session-overlay').style.display = 'flex';
-                startT = Date.now();
-                tickTime();
-                tInterval = setInterval(tickTime, 1000);
-            } catch (err) {
-                console.error(err);
-                popMsg("Connection error.", "error");
-            }
-        }
+        activeWin.document.open();
+        activeWin.document.write(txt);
+        activeWin.document.close();
+    } catch (err) {
+        // CORS или относительные пути: грузим ссылку напрямую
+        if (g.url) activeWin.location.href = g.url;
+        else { activeWin.close(); popMsg("Connection error.", "error"); return; }
+    }
+    startSession();
+}
 
         function tickTime() {
             if(!startT) return;
